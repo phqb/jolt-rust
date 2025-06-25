@@ -125,6 +125,14 @@ macro_rules! define_impl_struct {
 
 /// See also: Jolt's [`ContactListener`](https://jrouwe.github.io/JoltPhysicsDocs/5.1.0/class_contact_listener.html) class.
 pub trait ContactListener {
+    fn on_contact_validate(
+        &self,
+        body1: &JPC_Body,
+        body2: &JPC_Body,
+        base_offset: JPC_RVec3,
+        collision_result: &JPC_CollideShapeResult,
+    ) -> JPC_ValidateResult;
+
     fn on_contact_added(
         &self,
         body1: &JPC_Body,
@@ -145,6 +153,7 @@ pub trait ContactListener {
 }
 
 define_impl_struct!(mut ContactListener {
+    OnContactValidate,
     OnContactAdded,
     OnContactPersisted,
     OnContactRemoved,
@@ -155,6 +164,17 @@ struct ContactListenerBridge<T> {
 }
 
 impl<T: ContactListener> ContactListenerBridge<T> {
+    unsafe extern "C" fn OnContactValidate(
+        this: *mut c_void,
+        body1: *const JPC_Body,
+        body2: *const JPC_Body,
+        base_offset: JPC_RVec3,
+        collision_result: *const JPC_CollideShapeResult,
+    ) -> JPC_ValidateResult {
+        let this = this.cast::<T>().as_ref().unwrap();
+        this.on_contact_validate(&*body1, &*body2, base_offset, &*collision_result)
+    }
+
     unsafe extern "C" fn OnContactAdded(
         this: *mut c_void,
         body1: *const JPC_Body,
