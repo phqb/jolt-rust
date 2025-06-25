@@ -29,7 +29,7 @@ impl BroadPhaseLayer {
 }
 
 /// An ID that can be used to access a body using [`BodyInterface`][crate::BodyInterface].
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd)]
 pub struct BodyId(JPC_BodyID);
 
 impl BodyId {
