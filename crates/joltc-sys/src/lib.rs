@@ -1,4 +1,6 @@
 mod generated;
+#[cfg(feature = "nalgebra")]
+pub mod nalgebra;
 
 pub use generated::*;
 
