@@ -216,7 +216,6 @@ impl From<nalgebra::Matrix4<f64>> for JPC_DMat44 {
 impl From<JPC_Quat> for nalgebra::Quaternion<f32> {
     #[inline]
     fn from(value: JPC_Quat) -> Self {
-        Self::identity();
         Self::new(value.w, value.x, value.y, value.z)
     }
 }
@@ -224,6 +223,27 @@ impl From<JPC_Quat> for nalgebra::Quaternion<f32> {
 impl From<nalgebra::Quaternion<f32>> for JPC_Quat {
     #[inline]
     fn from(value: nalgebra::Quaternion<f32>) -> Self {
+        Self {
+            x: value.coords.x,
+            y: value.coords.y,
+            z: value.coords.z,
+            w: value.coords.w,
+        }
+    }
+}
+
+impl From<JPC_Quat> for nalgebra::UnitQuaternion<f32> {
+    #[inline]
+    fn from(value: JPC_Quat) -> Self {
+        Self::from_quaternion(nalgebra::Quaternion::new(
+            value.w, value.x, value.y, value.z,
+        ))
+    }
+}
+
+impl From<nalgebra::UnitQuaternion<f32>> for JPC_Quat {
+    #[inline]
+    fn from(value: nalgebra::UnitQuaternion<f32>) -> Self {
         Self {
             x: value.coords.x,
             y: value.coords.y,
